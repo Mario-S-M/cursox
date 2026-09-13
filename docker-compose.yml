@@ -1,0 +1,54 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: cursox-mysql
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --socket=/var/run/mysqld/mysqld.sock
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: cursox
+    ports:
+      - "3306:3306"
+    volumes:
+      - cursox-db-data:/var/lib/mysql
+      - cursox-mysql-socket:/var/run/mysqld
+      - ./docker/initdb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  web:
+    build:
+      context: ./docker
+    container_name: cursox-web
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html
+      - cursox-mysql-socket:/var/run/mysqld
+    depends_on:
+      db:
+        condition: service_healthy
+
+  phpmyadmin:
+    image: phpmyadmin:5
+    container_name: cursox-phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: ""
+      UPLOAD_LIMIT: 64M
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  cursox-db-data:
+  cursox-mysql-socket:

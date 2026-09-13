@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='utf-8'>
+    <meta name='Cursox' content='width=device-width, initial-scale=1'>
+    <title>Todos los cursos</title>
+    <link rel='stylesheet' href='styles.css'>
+</head>
+<body>
+    <header>
+        <img src="logo.png" width="500">
+        <h1>Todos los cursos</h1>
+        <div class="menu-gird">
+            <a href="Cursox.html" class="td-btn activate">Regresar al menu</a>
+        </div>
+    </header>
+    <br><br>
+    <div id="contenedor-general-maestros"></div>
+    <div style="text-align: center; margin: 20px 0;">
+        <button id="btn-mostrar-mas" style="padding: 10px 20px; font-size: 1rem; cursor: pointer;">Cargar más maestros</button>
+    </div>
+    <script>
+        const contenedorGeneral = document.getElementById('contenedor-general-maestros');
+        const btnMostrarMas = document.getElementById('btn-mostrar-mas');
+        let cantidadCargada = 0;
+        const limiteDeCarga = 2;
+        const limiteReseñas = 2;
+        function cargarMaestros() {
+            fetch(`conectar.php?limit=${limiteDeCarga}&offset=${cantidadCargada}`)
+                .then(res => res.json())
+                .then(respuesta => {
+                    if (respuesta.status === "success" && respuesta.data.length > 0) {
+                        respuesta.data.forEach(maestro => {
+                            const idReal = maestro.ID || maestro.id;
+                            
+                            const tarjetaMaestro = document.createElement('div');
+                            tarjetaMaestro.className = 'tarjeta-bloque-maestro';
+                            tarjetaMaestro.style.marginBottom = '40px';
+                            tarjetaMaestro.setAttribute('data-maestro-id', idReal);
+                            tarjetaMaestro.setAttribute('data-reseñas-cargadas', '0');
+                            
+                            tarjetaMaestro.innerHTML = `
+                                <div class="auron">
+                                    <img src="${maestro.Foto}" width="500"><br>
+                                    <div>
+                                        <h2>Maestro:</h2><p>${maestro.Nombre}</p>
+                                        <h2>Curso de:</h2><p>${maestro.Curso}</p>
+                                        <h2>Tipo de curso:</h2><p>${maestro.Tcurso}</p>
+                                        <h2>Costo de clase p/hora:</h2><p>$${maestro.Costo} mxn</p>
+                                        <h2>Telefono de contacto</h2><p>${maestro.Tel}</p>
+                                    </div>
+                                </div>
+                                <div class="zona-acciones-reseñas" style="margin-top: 10px;">
+                                    <input type="text" class="input-texto-reseña" placeholder="Escribe una reseña">
+                                    <button type="button" class="btn-enviar-reseña-accion">Enviar</button>
+                                </div>
+                                <hr style="margin: 15px 0;"><br>
+                                <button class="vc1">👁️ Ver Catálogo de Reseñas</button>
+                                <div class="sc1" style="display: none; margin-top: 15px;">
+                                    <h3>Reseñas:</h3>
+                                    <div class="cr1"></div>
+                                    <button class="btn-mas-reseñas" style="padding: 5px 10px; margin-top: 10px; display: none;">Cargar más reseñas</button>
+                                </div>
+                            `;
+                            contenedorGeneral.appendChild(tarjetaMaestro);
+                        });
+                        cantidadCargada += respuesta.data.length;
+                        if (respuesta.data.length < limiteDeCarga) {
+                            btnMostrarMas.style.display = "none";
+                        }
+                    } else {
+                        if (cantidadCargada === 0) {
+                            contenedorGeneral.innerHTML = `<p style="color: red; font-weight: bold;">⚠️ No hay perfiles en la base de datos.</p>`;
+                        }
+                        btnMostrarMas.style.display = "none";
+                    }
+                });
+        }
+        btnMostrarMas.addEventListener('click', cargarMaestros);
+        cargarMaestros();
+
+        // DELEGACIÓN PURA Y DINÁMICA POR EVENTO CLIC DE RATÓN
+        document.body.addEventListener('click', function(e) {
+            if (e.target.classList.contains('btn-enviar-reseña-accion')) {
+                const tarjeta = e.target.closest('.tarjeta-bloque-maestro');
+                const maestroId = tarjeta.getAttribute('data-maestro-id');
+                const inputReseña = tarjeta.querySelector('.input-texto-reseña');
+                const seccionCatalogo = tarjeta.querySelector('.sc1');
+                const texto = inputReseña.value.trim();
+                if (texto === "") return;
+
+                // Cambiado a FormData para blindar la lectura de datos
+                const datos = new FormData();
+                datos.append('maestro_id', maestroId);
+                datos.append('texto', texto);
+
+                fetch('procesar_reseñas.php', { method: 'POST', body: datos })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === "success") {
+                        inputReseña.value = "";
+                        tarjeta.setAttribute('data-reseñas-cargadas', '0');
+                        tarjeta.querySelector('.cr1').innerHTML = "";
+                        if (seccionCatalogo && seccionCatalogo.style.display === "block") {
+                            mostrarReseñasEnPantalla(tarjeta, maestroId);
+                        }
+                    }
+                });
+            }
+            if (e.target.classList.contains('vc1')) {
+                const btnVer = e.target;
+                const tarjeta = btnVer.closest('.tarjeta-bloque-maestro');
+                const maestroId = tarjeta.getAttribute('data-maestro-id');
+                const seccionCatalogo = tarjeta.querySelector('.sc1');
+                if (seccionCatalogo.style.display === "none" || seccionCatalogo.style.display === "") {
+                    seccionCatalogo.style.display = "block";
+                    btnVer.textContent = "🙈 Ocultar Catálogo";
+                    tarjeta.setAttribute('data-reseñas-cargadas', '0');
+                    tarjeta.querySelector('.cr1').innerHTML = "";
+                    mostrarReseñasEnPantalla(tarjeta, maestroId);
+                } else {
+                    seccionCatalogo.style.display = "none";
+                    btnVer.textContent = "👁️ Ver Catálogo de Reseñas";
+                }
+            }
+            if (e.target.classList.contains('btn-mas-reseñas')) {
+                const tarjeta = e.target.closest('.tarjeta-bloque-maestro');
+                const maestroId = tarjeta.getAttribute('data-maestro-id');
+                mostrarReseñasEnPantalla(tarjeta, maestroId);
+            }
+        });
+
+        function mostrarReseñasEnPantalla(tarjeta, maestroId) {
+            const contenedorReseñas = tarjeta.querySelector('.cr1');
+            const btnMasReseñas = tarjeta.querySelector('.btn-mas-reseñas');
+            let offsetReseñas = parseInt(tarjeta.getAttribute('data-reseñas-cargadas'), 10) || 0;
+
+            fetch(`procesar_reseñas.php?maestro_id=${maestroId}&limit=${limiteReseñas}&offset=${offsetReseñas}`)
+                .then(res => res.json())
+                .then(reseñasGuardadas => {
+                    if (reseñasGuardadas.length === 0) {
+                        if (offsetReseñas === 0) {
+                            contenedorReseñas.innerHTML = "<p>No hay reseñas todavía.</p>";
+                        }
+                        btnMasReseñas.style.display = "none";
+                        return;
+                    }
+                    reseñasGuardadas.forEach(function(reseña) {
+                        const p = document.createElement('p');
+                        p.textContent = "⭐ " + reseña;
+                        p.style.borderBottom = "1px dashed #ccc";
+                        p.style.paddingBottom = "5px";
+                        contenedorReseñas.appendChild(p);
+                    });
+                    let nuevasCargadas = offsetReseñas + reseñasGuardadas.length;
+                    tarjeta.setAttribute('data-reseñas-cargadas', nuevasCargadas);
+                    if (reseñasGuardadas.length < limiteReseñas) {
+                        btnMasReseñas.style.display = "none";
+                    } else {
+                        btnMasReseñas.style.display = "block";
+                    }
+                });
+        }
+    </script>
+</body>
+</html>

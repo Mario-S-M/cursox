@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='utf-8'>
+    <meta name='Cursox' content='width=device-width, initial-scale=1'>
+    <title>Actualizacion de perfil</title>
+    <link rel='stylesheet' href='styles.css'>
+</head>
+<body>
+    <header>
+        <img src="logo.png" width="500">
+        <h1>Modificar curso/perfil</h1>
+        <div class="menu-gird">
+            <a href="Cursox.html" class="td-btn activate">Regresar al menu</a>
+        </div>
+    </header>
+    <br><br>
+    <div style="text-align: center; width: 90vw; margin: 0 auto;">
+        <input type="text" id="buscar_id" placeholder="Escribe la ID a buscar" style="font-size:2.5rem; padding:10px; width:70%;">
+        <button type="button" id="btn_buscar" style="font-size:2.5rem; padding:10px;">🔍 Buscar</button>
+        <p id="msg_error" style="color:red; font-size:2rem; font-weight:bold;"></p>
+    </div>
+    <br><br>
+    <div class="mod">
+        <form id="form-curso" action="modi.php" method="POST" enctype="multipart/form-data">
+            <input type="hidden" id="idu" name="id_usuario">
+            <span id="c_nom"><input type="text" id="nom" name="nom" placeholder="Escribe tu nombre"><br><br></span>
+            <span id="c_tel"><input type="text" id="tel" name="tel" placeholder="Escribe tu telefono"><br><br></span>
+            <span id="c_cur"><input type="text" id="cur" name="curso" placeholder="Escribe de que será tu curso"><br><br></span>
+            <span id="c_mo">
+                <label for="mo">Elige la modalidad del curso:</label><br>
+                <select id="mo" name="mo" class="mod">
+                    <option value="online">Online</option>
+                    <option value="presencial">Presencial</option>
+                </select><br><br>
+            </span>
+            <span id="c_cc"><input type="text" id="cc" name="costo"  placeholder="Escribe el costo de la clase"><br><br></span>
+            <span id="c_ft">
+                <label for="ft">Suba una foto suya para su presentacion en el curso:</label><br>
+                <div id="wrapper_foto"></div>
+                <input type="file" id="ft" name="ftc" accept="image/*"><br><br><br>
+            </span>
+        </form>
+    </div>
+    <br><br>
+    <a href="Cursox.html" id="btnmd" class="td-btn activate">Continuar</a>
+    <script>
+        document.getElementById('btn_buscar').addEventListener('click', function() {
+            const idUsuario = document.getElementById('buscar_id').value.trim();
+            const errorEl = document.getElementById('msg_error');
+            if(!idUsuario) {
+                alert("❌ Por favor, escribe un ID primero.");
+                return;
+            }
+            errorEl.style.color = "orange";
+            errorEl.textContent = "🔍 Buscando maestro...";
+            const urlBase = window.location.protocol + "//" + window.location.host + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
+            const urlFinal = urlBase + '/buscar_maestro.php?id=' + encodeURIComponent(idUsuario);
+            fetch(urlFinal)
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error(`Error en el servidor: HTTP ${res.status}`);
+                    }
+                    return res.json();
+                })
+                .then(data => {
+                    if(data.status === "success") {
+                        errorEl.textContent = "";
+                        document.getElementById('idu').value = idUsuario;
+                        const verificarYFiltrar = (idInput, idContenedor, valor) => {
+                            const input = document.getElementById(idInput);
+                            const contenedor = document.getElementById(idContenedor);
+                            if(input && contenedor) {
+                                if(valor !== null && valor !== undefined && valor.toString().trim() !== "") {
+                                    input.value = valor;
+                                    contenedor.style.width = "100%";
+                                    contenedor.style.display = "block";
+                                } else {
+                                    input.value = "";
+                                    contenedor.style.display = "none";
+                                }
+                            }
+                        };
+                        verificarYFiltrar('nom', 'c_nom', data.nombre);
+                        verificarYFiltrar('tel', 'c_tel', data.telefono);
+                        verificarYFiltrar('cur', 'c_cur', data.curso);
+                        verificarYFiltrar('mo', 'c_mo', data.tcurso);
+                        verificarYFiltrar('cc', 'c_cc', data.costo);
+                        const cFoto = document.getElementById('c_ft');
+                        const wFoto = document.getElementById('wrapper_foto');
+                        if(cFoto && wFoto) {
+                            if(data.foto) {
+                                wFoto.innerHTML = `<p style="font-size:1.5rem">Imagen actual: <a href="${data.foto}" target="_blank">Ver</a></p>`;
+                                cFoto.style.display = "block";
+                            } else {
+                                wFoto.innerHTML = "";
+                                cFoto.style.display = "none";
+                            }
+                        }
+                    } else {
+                        errorEl.style.color = "red";
+                        errorEl.textContent = data.message;
+                    }
+                })
+                .catch(error => {
+                    errorEl.style.color = "red";
+                    errorEl.textContent = "❌ No se pudo completar la búsqueda.";
+                    alert("Ocurrió un problema: " + error.message);
+                });
+        });
+        document.getElementById('btnmd').addEventListener('click', function(e) {
+            e.preventDefault();
+            const inputNombre = document.getElementById('nom');
+            const inputTelefono = document.getElementById('tel');
+            const contenedorNombre = document.getElementById('c_nom');
+            const contenedorTelefono = document.getElementById('c_tel');
+            if (contenedorNombre && contenedorNombre.style.display !== "none" && inputNombre && inputNombre.value.trim() === "") {
+                alert("⚠️ El campo Nombre no puede quedar vacío.");
+                inputNombre.focus();
+                return;
+            }
+            if (contenedorTelefono && contenedorTelefono.style.display !== "none" && inputTelefono && inputTelefono.value.trim() === "") {
+                alert("⚠️ El campo Teléfono no puede quedar vacío.");
+                inputTelefono.focus();
+                return;
+            }
+            const form = document.getElementById('form-curso');
+            if(form) form.submit();
+        });
+    </script>
+    <footer>
+        <h2>Creado por:<br>Emmanuel Soto Tovar<br>Angel Cuevas Gonzales</h2>
+    </footer>
+</body>
+</html>

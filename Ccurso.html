@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='utf-8'>
+    <meta name='Cursox' content='width=device-width, initial-scale=1'>
+    <title>Crea tu curso</title>
+    <link rel='stylesheet' href='styles.css'>
+</head>
+<body>
+    <header>
+        <img src="logo.png" width="500">
+        <h1>Crea tu curso</h1>
+        <a href="Cursox.html" class="td-btn activate">Regresar al menu</a>
+    </header>
+    <br><br>
+    <div class="ccur">
+        <form id="form-curso" action="guardar_curso.php" method="POST" enctype="multipart/form-data">
+            <input type="text" id="idu" name="id_usuario" placeholder="Escribe tu id"><br><br>
+            <input type="text" id="cur" name="curso" placeholder="Escribe de que será tu curso"><br><br>
+            <label for="mo">Elige la modalidad del curso:</label><br>
+            <select id="mo" name="mo" class="mod">
+                <option value="online">Online</option>
+                <option value="presencial">Presencial</option>
+            </select><br><br>
+            <input type="text" id="cc" name="costo"  placeholder="Escribe el costo de la clase"><br><br>
+            <label for="ft">Suba una foto suya para su presentacion en el curso:</label><br>
+            <input type="file" id="ft" name="ftc" accept="image/*"><br><br><br>
+        </form>
+    </div>
+    <a href="Cursox.html" id="btncr" class="td-btn activate">Continuar</a>
+    <script>
+             document.getElementById("btncr").addEventListener("click", function(event) {
+            event.preventDefault(); // Evitamos que el enlace recargue la página solo
+            let id  = document.getElementById("idu").value.trim();
+            let cur = document.getElementById("cur").value.trim();
+            let cc  = document.getElementById("cc").value.trim();
+            let ft  = document.getElementById("ft").value;
+            if (id === "" || cur === "" || cc === "" || ft === "") {
+                alert("Por favor, llene todos los campos antes de continuar.");
+                return;
+            }
+            document.getElementById("form-curso").submit();
+        });
+    </script>
+    <footer>
+        <h2>Creado por: <br>Emmanuel Soto Tovar<br>Angel Cuevas Gonzales</h2>
+    </footer>
+</body>
+</html>

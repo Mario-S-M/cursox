@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='utf-8'>
+    <meta name='Cursox' content='width=device-width, initial-scale=1'>
+    <title>Crea tu perfil</title>
+    <link rel='stylesheet' href='styles.css'>
+</head>
+<body>
+    <header>
+        <img src="logo.png" width="500">
+        <h1>Crea tu perfil</h1>
+        <div class="menu-gird">
+            <a href="Cursox.html" class="td-btn activate">Regresar al menu</a>
+        </div>
+    </header>
+    <br><br>
+    <div class="reg">
+        <form id="form-perfil" action="guardar_perfil.php" method="POST">
+            <input type="text" id="nom" name="nombre" placeholder="Escribe tu nombre"><br><br>
+            <input type="text" id="tc" name="telefono" placeholder="Escribe tu telefono de contacto"><br><br>
+            <label for="id_u">Id autogenerada (no modificable, se recomienda anotar):</label><br>
+            <span id="id_u"></span><br><br><br>
+            <input type="hidden" id="id_u_hidden" name="id_usuario">
+        </form>
+        <a href="Cursox.html" id="btnc" class="td-btn activate">Continuar</a>
+    </div>
+    <script>
+        function generarNumeros() {
+            let resultado = "";
+            for (let i = 0; i < 10; i++) {
+                resultado += Math.floor(Math.random() * 10);
+            }
+            return resultado;
+        }
+        let idGenerada = generarNumeros();
+        document.getElementById("id_u").innerText = idGenerada;
+        document.getElementById("id_u_hidden").value = idGenerada;
+        document.getElementById("btnc").addEventListener("click", function(event) {
+            event.preventDefault();
+            let nombre = document.getElementById("nom").value.trim();
+            let tc = document.getElementById("tc").value.trim();
+            if (nombre === "" || tc === "") {
+                alert("Por favor, llene todos los campos antes de continuar.");
+                return;
+            }
+            document.getElementById("form-perfil").submit();
+        });
+    </script>
+    <br><br><br>
+    <footer>
+        <h2>Creado por: <br> Emmanuel Soto Tovar <br> Angel Cuevas Gonzales</h2>
+    </footer>
+</body>
+</html>

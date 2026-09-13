@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='utf-8'>
+    <meta name='Cursox' content='width=device-width, initial-scale=1'>
+    <title>Cursox</title>
+    <link rel='stylesheet' href='styles.css'>
+</head>
+<body>
+    <header>
+            <img src="logo.png" width="500"><br>
+            <a href="perfil.html" class="btnp">Registrate</a>
+    </header>
+    <h1>Inscribete a un curso</h1>
+    <div class="inscribete">
+        <a href="todos.html" class="menu-btn activate">Todos los cursos</a><br><br>
+        <input type="text" id="bus" placeholder="Busca un tema en especifico">
+        <a href="busquedas.html" id="btnb" class="td-btn activate">Buscar</a>
+        <script>
+            document.getElementById("btnb").addEventListener("click", function(event) {
+                let bus = document.getElementById("bus").value.trim();
+             if (bus === "") {
+                event.preventDefault();
+                alert("Ingrese algo en el buscador");
+            }
+            });
+        </script>
+    </div>
+    <h1>Tu curso</h1>
+    <div class="crea">
+        <a href="Ccurso.html" class="menu-btn activate">Crea tu curso</a><br><br>
+        <a href="modi.html" class="menu-btn activate">Modifica tu curso/perfil</a>
+    </div>
+    <footer>
+        <h2>Creado por: <br>Emmanuel Soto Tovar<br>Angel Cuevas Gonzales</h2>
+    </footer>
+</body>
+</html>

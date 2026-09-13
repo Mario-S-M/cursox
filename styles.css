@@ -1,0 +1,139 @@
+ body{
+    background-color: aquamarine;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    .mod{
+        text-align: center;
+    }
+    .mod input{
+        display: inline-block;
+        width: 500px;
+        height: 50px;
+        font-size: 100%;
+    }
+    .mod label{
+        width: 500px;
+        height: 50px;
+    }
+    .mod select{
+        display: inline-block;
+        width: 500px;
+        height: 50px;
+        font-size: 100%;
+    }
+    .btnp{
+        background: white;
+        color:black;
+        border: 1px solid black;
+        height: 10px;
+        width: 50px;
+    }
+    header {
+        text-align: center;
+    }
+    h1 {
+        text-align: center;
+    }
+    .menu-btn {
+        background: white;
+        color:black;
+        border: 1px solid black;
+        padding: 22px 10px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 30px;
+        cursor: pointer;
+        text-decoration: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    }
+    #bus{
+        text-align: center;
+        line-height: 50px;
+        width: 1170px;
+        height: 70Px;
+        font-size: 150%;
+    }
+    .td-btn {
+        background: white;
+        color:black;
+        border: 1px solid black;
+        padding: 22px 30px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 30px;
+        cursor: pointer;
+        text-decoration: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    }
+    .auron{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 20px;
+    }
+    .german{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 20px;
+    }
+    .temach{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 20px;
+    }
+    .tony{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 20px;
+    }
+    .reg{
+        text-align: center;
+    }
+    .reg input{
+        display: inline-block;
+        width: 500px;
+        height: 50px;
+        font-size: 100%;
+    }
+    #id_u{
+        background-color: white;
+        display: inline-block;
+        text-align: center;
+        line-height: 50px;
+        width: 500px;
+        height: 50Px;
+        font-size: 150%;
+    }
+    .ccur{
+        text-align: center;
+    }
+    .ccur input{
+        display: inline-block;
+        width: 500px;
+        height: 50px;
+        font-size: 100%;
+    }
+    .ccur label{
+        width: 500px;
+        height: 50px;
+    }
+    .ccur select{
+        display: inline-block;
+        width: 500px;
+        height: 50px;
+        font-size: 100%;
+    }
+}
